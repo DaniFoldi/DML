@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.danifoldi'
-version '0.0.1-SNAPSHOT'
+version '0.0.3'
 
 repositories {
     mavenCentral()
@@ -20,8 +20,5 @@ test {
 }
 
 shadowJar {
-    minimize()
-    // todo relocates
-
     getArchiveFileName().set("${project.name}-${project.version}.jar")
 }

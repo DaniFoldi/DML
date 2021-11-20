@@ -1,6 +1,10 @@
 package com.danifoldi.dml.type;
 
-public class DmlKey extends DmlCommentableValue {
+import com.danifoldi.dml.utils.SerializeUtil;
+
+import java.util.Objects;
+
+public class DmlKey extends DmlCommentableValue implements Comparable<DmlKey> {
     private String value;
 
     public DmlKey(String value) {
@@ -16,9 +20,30 @@ public class DmlKey extends DmlCommentableValue {
     }
 
     @Override
+    public String serialize(int indent) {
+        return SerializeUtil.serializeComment(comment(), indent) + SerializeUtil.indent(value, indent);
+    }
+
+    @Override
     public String toString() {
-        return "DmlKey{" +
-                "value='" + value + '\'' +
-                '}';
+        return "DmlKey{" + value + "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DmlKey dmlKey = (DmlKey) o;
+        return Objects.equals(value, dmlKey.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
+    @Override
+    public int compareTo(DmlKey o) {
+        return value.compareTo(o.value);
     }
 }

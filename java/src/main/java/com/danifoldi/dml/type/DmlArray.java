@@ -1,8 +1,11 @@
 package com.danifoldi.dml.type;
 
-import java.util.List;
+import com.danifoldi.dml.utils.SerializeUtil;
 
-public class DmlArray extends DmlCommentableValue {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class DmlArray extends DmlCommentableValue implements DmlDocument {
     private List<DmlValue> value;
 
     public DmlArray(List<DmlValue> value) {
@@ -22,9 +25,18 @@ public class DmlArray extends DmlCommentableValue {
     }
 
     @Override
+    public String serialize(int indent) {
+        String dense = value.stream().map(v -> v.serialize(0)).collect(Collectors.joining(", "));
+        return SerializeUtil.serializeComment(comment(), indent) + (!dense.contains("\n") && dense.length() <= 80 ? (value.isEmpty() ? "[]" : "[ " + dense + " ]") : SerializeUtil.indent("[\n" + value.stream().map(v -> v.serialize(2)).collect(Collectors.joining("\n")) + "\n]", indent));
+    }
+
+    @Override
+    public String serializeDocument() {
+        return serialize(0);
+    }
+
+    @Override
     public String toString() {
-        return "DmlArray{" +
-                "value=" + value +
-                '}';
+        return "DmlArray{" + value + "}";
     }
 }

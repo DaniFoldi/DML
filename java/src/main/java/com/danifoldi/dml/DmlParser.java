@@ -6,12 +6,19 @@ import com.danifoldi.dml.type.DmlComment;
 import com.danifoldi.dml.type.DmlKey;
 import com.danifoldi.dml.type.DmlNumber;
 import com.danifoldi.dml.type.DmlObject;
+import com.danifoldi.dml.type.DmlDocument;
 import com.danifoldi.dml.type.DmlString;
 import com.danifoldi.dml.type.DmlValue;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class DmlParser {
     private final String dmlString;
@@ -128,8 +135,9 @@ public class DmlParser {
                     while (!isMultilineCommentEnd(currentChar(), nextChar())) {
                         step();
                     }
-                    step();
                     comment.append(dmlString, start, pointer);
+                    step();
+                    step();
                 }
             }
         }
@@ -155,6 +163,7 @@ public class DmlParser {
 
     private DmlNumber parseNumber(DmlComment comment) throws DmlParseException {
         stepNextNonWhitespace();
+        int n = pointer;
         boolean negative = currentChar() == '-';
         if (negative) {
             step();
@@ -193,7 +202,7 @@ public class DmlParser {
             b = b.negate();
         }
         b = b.scaleByPowerOfTen(Integer.parseInt(exponent));
-        DmlNumber number = new DmlNumber(b);
+        DmlNumber number = new DmlNumber(b, dmlString.substring(n, pointer));
         number.comment(comment);
         return number;
     }
@@ -203,21 +212,25 @@ public class DmlParser {
         switch (charAt(pointer)) {
             case '\'' -> {
                 int start = pointer;
+                boolean didEscape;
                 do {
+                    didEscape = currentChar() == '\\';
                     step();
-                } while (charAt(pointer) != '\'');
+                } while (currentChar() != '\'' || didEscape);
                 step();
-                DmlString string = new DmlString(dmlString.substring(start + 1, pointer - 1));
+                DmlString string = new DmlString(dmlString.substring(start + 1, pointer - 1).replace("\\'", "'"));
                 string.comment(comment);
                 return string;
             }
             case '"' -> {
                 int start = pointer;
+                boolean didEscape;
                 do {
+                    didEscape = currentChar() == '\\';
                     step();
-                } while (charAt(pointer) != '"');
+                } while (currentChar() != '"' || didEscape);
                 step();
-                DmlString string = new DmlString(dmlString.substring(start + 1, pointer - 1));
+                DmlString string = new DmlString(dmlString.substring(start + 1, pointer - 1).replace("\\\"", "\""));
                 string.comment(comment);
                 return string;
             }
@@ -247,27 +260,33 @@ public class DmlParser {
         };
     }
 
-    private DmlObject parseObjectValue() throws DmlParseException {
+    private DmlObject parseObjectValue(boolean toplevel) throws DmlParseException {
         DmlObject object = new DmlObject(new HashMap<>());
-        while (nextNonWhitespace(pointer) != '}' && pointer < dmlString.length()) {
+        while (charAt(nextNonWhitespace(pointer)) != '}' && pointer < dmlString.length()) {
             stepNextNonWhitespace();
             DmlComment comment = parseComment();
+            stepNextNonWhitespace();
             DmlKey key = parseKey(comment);
             stepNextNonWhitespace();
             if (currentChar() != ':') {
                 throw new DmlParseException(line, column, ":", String.valueOf(currentChar()));
             }
             step();
+            stepNextNonWhitespace();
             DmlComment comment1 = parseComment();
+            stepNextNonWhitespace();
             DmlValue value = parseValue(comment1);
-            object.add(key, value);
+            object.set(key, value);
             int sline = line;
             stepNextNonWhitespace();
-            if (currentChar() == '}') {
+            if ((pointer >= dmlString.length() && toplevel) || currentChar() == '}') {
                 break;
             }
             if (currentChar() != ',' && sline == line) {
                 throw new DmlParseException(line, column, ",", String.valueOf(currentChar()));
+            }
+            if (currentChar() == ',') {
+                step();
             }
         }
         return object;
@@ -278,7 +297,7 @@ public class DmlParser {
         if (comment == null) {
             comment = parseComment();
         }
-        DmlObject object = parseObjectValue();
+        DmlObject object = parseObjectValue(false);
         object.comment(comment);
 
         if (charAt(nextNonWhitespace(pointer)) != '}') {
@@ -301,14 +320,17 @@ public class DmlParser {
             stepNextNonWhitespace();
             DmlComment vcomment = parseComment();
             array.add(parseValue(vcomment));
+            int sline = line;
             stepNextNonWhitespace();
             if (currentChar() == ']') {
                 break;
             }
-            if (currentChar() != ',') {
+            if (currentChar() != ',' && sline == line) {
                 throw new DmlParseException(line, column, ",", String.valueOf(currentChar()));
             }
-            step();
+            if (currentChar() == ',') {
+                step();
+            }
         }
 
         if (charAt(nextNonWhitespace(pointer)) != ']') {
@@ -321,18 +343,22 @@ public class DmlParser {
 
     private DmlValue parseDocument() throws DmlParseException {
         stepNextNonWhitespace();
+        DmlComment comment = parseComment();
+        stepNextNonWhitespace();
         DmlValue result;
 
         switch (nextNonWhitespaceChar(pointer)) {
             case '{':
-                result = parseObject(null);
+                result = parseObject(comment);
                 break;
             case '[':
-                result = parseArray(null);
+                result = parseArray(comment);
                 break;
             default:
-                if (isString(charAt(pointer)) || isKey(charAt(pointer))) {
-                    result = parseObjectValue();
+                if (isKey(charAt(pointer))) {
+                    DmlObject object = parseObjectValue(true);
+                    object.comment(comment);
+                    result = object;
                 } else {
                     throw new DmlParseException(line, column, "{, [, \", ' or key", String.valueOf(charAt(pointer)));
                 }
@@ -347,6 +373,49 @@ public class DmlParser {
 
     public static DmlValue parse(String dmlString) throws DmlParseException {
         return new DmlParser(dmlString).parseDocument();
+    }
+
+    public static DmlValue parse(Path file) throws DmlParseException, IOException {
+        try (BufferedReader reader = Files.newBufferedReader(file)) {
+            return parse(reader.lines().collect(Collectors.joining("\n")));
+        }
+    }
+
+    public static String serialize(DmlDocument document) {
+        return document.serializeDocument();
+    }
+
+    public static void serialize(DmlDocument document, Path file) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+            writer.write(serialize(document));
+        }
+    }
+
+    public static void main(String[] args) throws DmlParseException{
+        String test = """
+                // hello
+                a: 1
+                /*
+                * asd
+                */
+                b: ["ran\\"d'om",1,2,3,4,5
+                6,7,8
+                9
+                10
+                
+                ]
+                /*
+                anyád
+                picsája +
+                */
+                c: {tomi: "van", egysenki: "há mé
+                 lenne"}
+                 e:[]
+                 d:{}
+                """;
+        DmlObject o = (DmlObject)DmlParser.parse(test);
+        System.out.println(o);
+        System.out.println(DmlParser.serialize(o));
     }
 }
 
