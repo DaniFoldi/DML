@@ -54,7 +54,7 @@ jobs:
 
     - name: Nexus Repo Publish Relesae
       uses: sonatype-nexus-community/nexus-repo-github-action@master
-      if: github.event_name == "release"
+      if: 'github.event_name == "release"'
       with:
         serverUrl: https://repo.danifoldi.com
         username: ci
