@@ -31,7 +31,7 @@ jobs:
       with:
         arguments: shadowJar
 
-    - uses: DaniFoldi/action-get-gradle-version@v1.1.0
+    - uses: DaniFoldi/action-get-gradle-version@v1.1.1
       id: gradle-version
       with:
         file: build.gradle
