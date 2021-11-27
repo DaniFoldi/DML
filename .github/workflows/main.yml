@@ -30,16 +30,16 @@ jobs:
     - uses: gradle/gradle-build-action@v2
       with:
         arguments: shadowJar
-        build-root-directory: ./java
+        build-root-directory: java
 
     - uses: DaniFoldi/action-get-gradle-version@v1.1.1
       id: gradle-version
       with:
-        file: build.gradle
+        file: java/build.gradle
 
     - name: Find artifact
       id: artifact
-      run: echo "::set-output name=file::$(ls -1 build/libs/*.jar | head -n 1)"
+      run: echo "::set-output name=file::$(ls -1 java/build/libs/*.jar | head -n 1)"
 
     - name: Nexus Repo Publish Snapshot
       uses: sonatype-nexus-community/nexus-repo-github-action@master
