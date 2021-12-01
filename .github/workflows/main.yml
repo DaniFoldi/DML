@@ -5,9 +5,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   release:
     types:
       - created
@@ -16,52 +13,19 @@ jobs:
   java-build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
 
-    - uses: actions/checkout@v1
+      - name: Set up JDK 16
+        uses: actions/setup-java@v1
+        with:
+          java-version: 16
 
-    - name: Set up JDK 16
-      uses: actions/setup-java@v1
-      with:
-        java-version: 16
+      - uses: gradle/gradle-build-action@v2
+        with:
+          arguments: shadowJar
+          build-root-directory: java
 
-#    - name: Build with Maven
-#      run: mvn package --file pom.xml
-
-    - uses: gradle/gradle-build-action@v2
-      with:
-        arguments: shadowJar
-        build-root-directory: java
-
-    - uses: DaniFoldi/action-get-gradle-version@v1.1.1
-      id: gradle-version
-      with:
-        file: java/build.gradle
-
-    - name: Find artifact
-      id: artifact
-      run: echo "::set-output name=file::$(ls -1 java/build/libs/*.jar | head -n 1)"
-
-    - name: Nexus Repo Publish Snapshot
-      uses: sonatype-nexus-community/nexus-repo-github-action@master
-      with:
-        serverUrl: https://repo.danifoldi.com
-        username: ci
-        password: ${{ secrets.NEXUS_KEY }}
-        format: maven2
-        repository: maven-snapshots
-        coordinates: groupId=${{ steps.gradle-version.outputs.group }} artifactId=${{ steps.gradle-version.outputs.artifact }} version=${{ steps.gradle-version.outputs.version }}
-        assets: extension=jar
-        filename: ${{ steps.artifact.outputs.file }}
-
-    - name: Nexus Repo Publish Relesae
-      uses: sonatype-nexus-community/nexus-repo-github-action@master
-      if: ${{ github.event_name == 'release' }}
-      with:
-        serverUrl: https://repo.danifoldi.com
-        username: ci
-        password: ${{ secrets.NEXUS_KEY }}
-        format: maven2
-        repository: maven-releases
-        coordinates: groupId=${{ steps.gradle-version.outputs.group }} artifactId=${{ steps.gradle-version.outputs.artifact }} version=${{ steps.gradle-version.outputs.version }}
-        assets: extension=jar
-        filename: ${{ steps.artifact.outputs.file }}
+      - uses: gradle/gradle-build-action@v2
+        with:
+          arguments: publish
+          build-root-directory: java
