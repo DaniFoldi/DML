@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'maven-publish'
 }
 
@@ -29,10 +28,6 @@ task sourcesJar(type: Jar) {
 
 artifacts {
     archives sourcesJar
-}
-
-shadowJar {
-    getArchiveFileName().set("${project.name}-${project.version}.jar")
 }
 
 publishing {
