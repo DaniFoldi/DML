@@ -4,9 +4,10 @@ plugins {
 }
 
 group 'com.danifoldi'
-version '0.0.3'
+version '1.0.0'
 
 sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
 
 repositories {
     mavenCentral()

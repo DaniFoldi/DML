@@ -103,12 +103,8 @@ public class DmlParser {
         return c == '\n';
     }
 
-    private boolean isString(char c) {
-        return c == '"' || c == '\'';
-    }
-
     private boolean isKey(char c) {
-        return String.valueOf(c).matches("[a-zA-Z0-9-_]");
+        return String.valueOf(c).matches("[a-zA-Z0-9-_+]");
     }
 
 
@@ -120,8 +116,7 @@ public class DmlParser {
         while (isCommentStart(currentChar(), nextChar())) {
             switch (nextChar()) {
                 case '/' -> {
-                    step();
-                    step();
+                    step(2);
                     int start = pointer;
                     while (!isNewline(currentChar())) {
                         step();
@@ -129,15 +124,13 @@ public class DmlParser {
                     comment.append(dmlString, start, pointer);
                 }
                 case '*' -> {
-                    step();
-                    step();
+                    step(2);
                     int start = pointer;
                     while (!isMultilineCommentEnd(currentChar(), nextChar())) {
                         step();
                     }
                     comment.append(dmlString, start, pointer);
-                    step();
-                    step();
+                    step(2);
                 }
             }
         }
@@ -389,33 +382,6 @@ public class DmlParser {
         try (BufferedWriter writer = Files.newBufferedWriter(file)) {
             writer.write(serialize(document));
         }
-    }
-
-    public static void main(String[] args) throws DmlParseException{
-        String test = """
-                // hello
-                a: 1
-                /*
-                * asd
-                */
-                b: ["ran\\"d'om",1,2,3,4,5
-                6,7,8
-                9
-                10
-                
-                ]
-                /*
-                anyád
-                picsája +
-                */
-                c: {tomi: "van", egysenki: "há mé
-                 lenne"}
-                 e:[]
-                 d:{}
-                """;
-        DmlObject o = (DmlObject)DmlParser.parse(test);
-        System.out.println(o);
-        System.out.println(DmlParser.serialize(o));
     }
 }
 

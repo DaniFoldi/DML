@@ -35,13 +35,13 @@ public class DmlObject extends DmlCommentableValue implements DmlDocument {
 
     @Override
     public String serialize(int indent) {
-        String dense = value.keySet().stream().sorted().map(v -> v.serialize(2) + ": " + value.get(v).serialize(0)).collect(Collectors.joining(", "));
+        String dense = value.keySet().stream().map(v -> v.serialize(2) + ": " + value.get(v).serialize(0)).collect(Collectors.joining(", "));
         return SerializeUtil.serializeComment(comment(), indent) + (!dense.contains("\n") && dense.length() <= 80 ? (value.isEmpty() ? "{}" : "{ " + dense + " }") : SerializeUtil.indent("{\n" + value.keySet().stream().sorted().map(v -> v.serialize(2) + ": " + value.get(v).serialize(2)).collect(Collectors.joining("\n")) + "\n}", indent));
     }
 
     @Override
     public String serializeDocument() {
-        return SerializeUtil.serializeComment(comment(), 0) + SerializeUtil.indent(value.keySet().stream().sorted().map(v -> v.serialize(0) + ": " + value.get(v).serialize(0)).collect(Collectors.joining("\n")), 0);
+        return SerializeUtil.serializeComment(comment(), 0) + SerializeUtil.indent(value.keySet().stream().map(v -> v.serialize(0) + ": " + value.get(v).serialize(0)).collect(Collectors.joining("\n")), 0);
     }
 
     @Override
