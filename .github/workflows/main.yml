@@ -18,9 +18,9 @@ jobs:
           java-version: 16
       
       - name: Add nexus credentials
-        run:
-        - echo "user=${{ secrets.NEXUS_USER }}" > java/gradle.properties
-        - echo "password=${{ secrets.NEXUS_PASSWORD }}" >> java/gradle.properties
+        run: |-
+          echo "user=${{ secrets.NEXUS_USER }}" > java/gradle.properties
+          echo "password=${{ secrets.NEXUS_PASSWORD }}" >> java/gradle.properties
 
       - uses: gradle/gradle-build-action@v2
         with:
