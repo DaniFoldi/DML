@@ -23,9 +23,6 @@ public class DmlArray extends DmlCommentableValue implements DmlDocument {
     public void add(DmlValue value) {
         this.value.add(value);
     }
-    public void x() {
-
-    }
 
     @Override
     public String serialize(int indent) {

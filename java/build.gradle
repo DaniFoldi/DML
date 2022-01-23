@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'com.danifoldi'
-version '1.0.0'
+version '1.0.1'
 
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
@@ -14,21 +14,12 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 test {
     useJUnitPlatform()
-}
-
-task sourcesJar(type: Jar) {
-    archiveClassifier = 'sources'
-    from sourceSets.main.java.srcDirs
-}
-
-artifacts {
-    archives sourcesJar
 }
 
 publishing {
@@ -36,8 +27,9 @@ publishing {
         maven(MavenPublication) {
             artifactId = 'DML'
 
-            from components.java
-            artifact sourcesJar
+            artifact('build/libs/DML-' + project.version + '.jar') {
+                extension 'jar'
+            }
 
             versionMapping {
                 usage('java-api') {
@@ -52,6 +44,16 @@ publishing {
                 name = 'DML'
                 description = 'A better markup language'
                 url = 'https://github.com/DaniFoldi/DML'
+            }
+        }
+    }
+    repositories {
+        maven {
+            name 'danifoldi'
+            url 'https://repo.danifoldi.com/repository/maven-releases/'
+            credentials {
+                username project.user
+                password project.password
             }
         }
     }
