@@ -1,6 +1,6 @@
 package com.danifoldi.dml.type;
 
-import com.danifoldi.dml.utils.SerializeUtil;
+import com.danifoldi.dml.DmlSerializer;
 
 public class DmlString extends DmlCommentableValue {
     private String value;
@@ -19,7 +19,7 @@ public class DmlString extends DmlCommentableValue {
 
     @Override
     public String serialize(int indent) {
-        return SerializeUtil.serializeComment(comment(), indent) + SerializeUtil.indent("'" + value.replace("'", "\\'") + "'", indent);
+        return DmlSerializer.serializeComment(comment(), indent) + DmlSerializer.indent("'" + value.replace("'", "\\'") + "'", indent);
     }
 
     @Override

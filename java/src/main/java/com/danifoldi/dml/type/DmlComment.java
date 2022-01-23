@@ -1,6 +1,6 @@
 package com.danifoldi.dml.type;
 
-import com.danifoldi.dml.utils.SerializeUtil;
+import com.danifoldi.dml.DmlSerializer;
 
 public class DmlComment extends DmlValue {
     private String value;
@@ -20,7 +20,7 @@ public class DmlComment extends DmlValue {
     @Override
     public String serialize(int indent) {
         int spaceCount = value.lines().anyMatch(s -> s.startsWith("* ")) ? 1 : 2;
-        return SerializeUtil.indent(!value.contains("\n") ? "//" + (value.startsWith(" ") ? "" : " ") + value : "/* " + SerializeUtil.indent(value, spaceCount) + "\n */", indent);
+        return DmlSerializer.indent(!value.contains("\n") ? "//" + (value.startsWith(" ") ? "" : " ") + value : "/* " + DmlSerializer.indent(value, spaceCount) + "\n */", indent);
     }
 
     @Override

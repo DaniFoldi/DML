@@ -1,4 +1,4 @@
-package com.danifoldi.dml;
+package com.danifoldi.dml.exception;
 
 public class DmlParseException extends Exception {
 

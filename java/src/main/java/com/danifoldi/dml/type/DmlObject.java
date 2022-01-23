@@ -1,6 +1,6 @@
 package com.danifoldi.dml.type;
 
-import com.danifoldi.dml.utils.SerializeUtil;
+import com.danifoldi.dml.DmlSerializer;
 
 import java.util.Map;
 import java.util.Set;
@@ -36,12 +36,12 @@ public class DmlObject extends DmlCommentableValue implements DmlDocument {
     @Override
     public String serialize(int indent) {
         String dense = value.keySet().stream().map(v -> v.serialize(2) + ": " + value.get(v).serialize(0)).collect(Collectors.joining(", "));
-        return SerializeUtil.serializeComment(comment(), indent) + (!dense.contains("\n") && dense.length() <= 80 ? (value.isEmpty() ? "{}" : "{ " + dense + " }") : SerializeUtil.indent("{\n" + value.keySet().stream().sorted().map(v -> v.serialize(2) + ": " + value.get(v).serialize(2)).collect(Collectors.joining("\n")) + "\n}", indent));
+        return DmlSerializer.serializeComment(comment(), indent) + (!dense.contains("\n") && dense.length() <= 80 ? (value.isEmpty() ? "{}" : "{ " + dense + " }") : DmlSerializer.indent("{\n" + value.keySet().stream().sorted().map(v -> v.serialize(2) + ": " + value.get(v).serialize(2)).collect(Collectors.joining("\n")) + "\n}", indent));
     }
 
     @Override
     public String serializeDocument() {
-        return SerializeUtil.serializeComment(comment(), 0) + SerializeUtil.indent(value.keySet().stream().map(v -> v.serialize(0) + ": " + value.get(v).serialize(0)).collect(Collectors.joining("\n")), 0);
+        return DmlSerializer.serializeComment(comment(), 0) + DmlSerializer.indent(value.keySet().stream().map(v -> v.serialize(0) + ": " + value.get(v).serialize(0)).collect(Collectors.joining("\n")), 0);
     }
 
     @Override

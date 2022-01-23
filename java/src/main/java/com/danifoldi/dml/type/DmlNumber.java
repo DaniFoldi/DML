@@ -1,6 +1,6 @@
 package com.danifoldi.dml.type;
 
-import com.danifoldi.dml.utils.SerializeUtil;
+import com.danifoldi.dml.DmlSerializer;
 
 import java.math.BigDecimal;
 
@@ -27,7 +27,7 @@ public class DmlNumber extends DmlCommentableValue {
 
     @Override
     public String serialize(int indent) {
-        return SerializeUtil.serializeComment(comment(), indent) + SerializeUtil.indent(cachedString != null ? cachedString : value.toString(), indent);
+        return DmlSerializer.serializeComment(comment(), indent) + DmlSerializer.indent(cachedString != null ? cachedString : value.toString(), indent);
     }
 
     @Override

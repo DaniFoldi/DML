@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface DmlPath {
-    String value();
+public @interface DmlConvertUsing {
+    Class<? extends DmlConverter> converter();
 }

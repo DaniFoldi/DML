@@ -1,6 +1,6 @@
 package com.danifoldi.dml.type;
 
-import com.danifoldi.dml.DmlTypeException;
+import com.danifoldi.dml.exception.DmlTypeException;
 
 public abstract class DmlValue {
 

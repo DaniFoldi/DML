@@ -10,4 +10,9 @@ public abstract class DmlCommentableValue extends DmlValue {
     public DmlComment comment() {
         return this.comment;
     }
+
+    public DmlCommentableValue withComment(String comment) {
+        this.comment = new DmlComment(comment);
+        return this;
+    }
 }

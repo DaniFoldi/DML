@@ -1,5 +1,6 @@
 package com.danifoldi.dml;
 
+import com.danifoldi.dml.exception.DmlParseException;
 import com.danifoldi.dml.type.DmlArray;
 import com.danifoldi.dml.type.DmlBoolean;
 import com.danifoldi.dml.type.DmlComment;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class DmlParser {
     private final String dmlString;
     private int pointer;
@@ -371,16 +373,6 @@ public class DmlParser {
     public static DmlValue parse(Path file) throws DmlParseException, IOException {
         try (BufferedReader reader = Files.newBufferedReader(file)) {
             return parse(reader.lines().collect(Collectors.joining("\n")));
-        }
-    }
-
-    public static String serialize(DmlDocument document) {
-        return document.serializeDocument();
-    }
-
-    public static void serialize(DmlDocument document, Path file) throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(file)) {
-            writer.write(serialize(document));
         }
     }
 }

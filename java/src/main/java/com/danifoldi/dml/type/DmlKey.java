@@ -1,6 +1,6 @@
 package com.danifoldi.dml.type;
 
-import com.danifoldi.dml.utils.SerializeUtil;
+import com.danifoldi.dml.DmlSerializer;
 
 import java.util.Objects;
 
@@ -21,7 +21,7 @@ public class DmlKey extends DmlCommentableValue implements Comparable<DmlKey> {
 
     @Override
     public String serialize(int indent) {
-        return SerializeUtil.serializeComment(comment(), indent) + SerializeUtil.indent(value, indent);
+        return DmlSerializer.serializeComment(comment(), indent) + DmlSerializer.indent(value, indent);
     }
 
     @Override
