@@ -16,10 +16,14 @@ class DmlComment {
   }
 
   serialize(indent) {
-    let spaceCount = this.#commentValue.split('\n').anyMatch(l => l.startsWith('* ')) ? 1 : 2
-    return DmlSerializer.indent(!this.#commentValue.contains('\n')
-      ? '//' + (this.#commentValue.startsWith(' ') ? ' ' : '') + this.#commentValue
-      : '/* ' + DmlSerializer.indent(this.#commentValue, spaceCount) + '\n */', indent)
+    let spaceCount = this.#commentValue.split('\n').some(l => l.trimLeft().startsWith('* ')) ? 1 : 2
+    return DmlSerializer.indent(this.#commentValue.indexOf('\n') === -1
+      ? '//' + (this.#commentValue.startsWith(' ') ? '' : ' ') + this.#commentValue
+      : '/*' + DmlSerializer.indent(this.#commentValue, spaceCount) + '*/', indent)
+  }
+
+  get [Symbol.toStringTag]() {
+    return `DmlComment{${this.#commentValue}}`
   }
 }
 

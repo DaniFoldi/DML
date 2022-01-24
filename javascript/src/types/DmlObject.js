@@ -1,10 +1,12 @@
 import DmlKey from './DmlKey.js'
 import DmlSerializer from '../DmlSerializer.js'
+import DmlCommentableValue from './DmlCommentableValue.js'
 
-class DmlObject {
+class DmlObject extends DmlCommentableValue {
   #map
 
   constructor(map) {
+    super()
     this.#map = map
   }
 
@@ -12,24 +14,27 @@ class DmlObject {
     if (!(key instanceof DmlKey)) {
       key = new DmlKey(key)
     }
-    this.#map.set(key, value)
+    this.#map.set(key.value(), [key, value])
   }
 
   get(key) {
-    if (!(key instanceof DmlKey)) {
-      key = new DmlKey(key)
+    if (key instanceof DmlKey) {
+      key = key.value()
     }
-    return this.#map.get(key)
+    return this.#map.get(key)[1]
   }
 
   serialize(indent) {
-    let dense = [...this.#map.keys()].map(v => v.serialize(2) + ': ' + this.#map.get(v).serialize(0)).join(', ')
+    let dense = [...this.#map.keys()]
+      .map(v => this.#map.get(v))
+      .map(v => v[0].serialize(2) + ': ' + v[1].serialize(0)).join(', ')
     return DmlSerializer.serializeComment(this.comment(), indent)
       + (dense.indexOf('\n') === -1 && dense.length <= 80)
       ? (this.#map.size === 0 ? '{}' : '{' + dense + '}')
       : DmlSerializer.indent(
         '{\n'
-        + [...this.#map.keys()].map(v => v.serialize(2) + ': ' + this.#map.get(v).serialize(2)).join('\n')
+        + [...this.#map.keys()].map(v => this.#map.get(v))
+          .map(v => v[0].serialize(2) + ': ' + v[1].serialize(0)).join('\n')
         + '\n}',
         indent
       )
@@ -38,11 +43,15 @@ class DmlObject {
   serializeDocument() {
     return DmlSerializer.serializeComment(this.comment(), 0)
       + DmlSerializer.indent(
-        [...this.#map.keys()].map(v => v.serialize(0)
-        + ': '
-        + this.#map.get(v).serialize(0)).join(',\n'),
+        [...this.#map.keys()]
+          .map(v => this.#map.get(v))
+          .map(v => v[0].serialize(0) + ': ' + v[1].serialize(0)).join(',\n'),
         0
       )
+  }
+
+  get [Symbol.toStringTag]() {
+    return `DmlObject{${[...this.#map.values()].map(v => v[0] + ': ' + v[1]).join(', ')}}`
   }
 }
 

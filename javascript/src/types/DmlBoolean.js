@@ -21,6 +21,10 @@ class DmlBoolean extends DmlCommentableValue {
     return DmlSerializer.serializeComment(this.comment(), indent)
       + DmlSerializer.indent(this.#value ? 'true' : 'false', indent)
   }
+
+  get [Symbol.toStringTag]() {
+    return `DmlBoolean{${this.#value}}`
+  }
 }
 
 export default DmlBoolean

@@ -20,6 +20,10 @@ class DmlKey extends DmlCommentableValue {
   serialize(indent) {
     return DmlSerializer.serializeComment(this.comment(), indent) + DmlSerializer.indent(this.#value, indent)
   }
+
+  get [Symbol.toStringTag]() {
+    return `DmlKey{${this.#value}}`
+  }
 }
 
 export default DmlKey

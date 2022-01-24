@@ -94,6 +94,14 @@
     "operator-linebreak": [
       "error",
       "before"
+    ],
+    "arrow-parens": [
+      "error",
+      "as-needed"
+    ],
+    "space-in-parens": [
+      "error",
+      "never"
     ]
   }
 }

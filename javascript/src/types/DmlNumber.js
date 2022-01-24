@@ -29,6 +29,10 @@ class DmlNumber extends DmlCommentableValue {
         indent
       )
   }
+
+  get [Symbol.toStringTag]() {
+    return `DmlNumber{${this.#cachedString ? this.#cachedString : this.#value}}`
+  }
 }
 
 export default DmlNumber

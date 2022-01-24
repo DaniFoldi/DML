@@ -1,6 +1,6 @@
 class DmlSerializer {
   static indent(text, spaces) {
-    text.split('\n').map(l => l.padStart(l.length + spaces)).join('\n')
+    return text.split('\n').map(l => l.padStart(spaces)).join('\n')
   }
 
   static serializeComment(comment, indent) {

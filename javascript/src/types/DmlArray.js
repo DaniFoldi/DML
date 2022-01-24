@@ -1,9 +1,11 @@
 import DmlSerializer from '../DmlSerializer.js'
+import DmlCommentableValue from './DmlCommentableValue.js'
 
-class DmlArray {
+class DmlArray extends DmlCommentableValue {
   #value
 
   constructor(value) {
+    super()
     this.#value = value
   }
 
@@ -29,6 +31,10 @@ class DmlArray {
 
   serializeDocument() {
     return this.serialize(0)
+  }
+
+  get [Symbol.toStringTag]() {
+    return `DmlArray{${this.#value}}`
   }
 }
 

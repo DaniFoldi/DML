@@ -17,8 +17,12 @@ class DmlString extends DmlCommentableValue {
   }
 
   serialize(indent) {
-    DmlSerializer.serializeComment(this.comment(), indent)
+    return DmlSerializer.serializeComment(this.comment(), indent)
       + DmlSerializer.indent('\'' + this.#value.replace('\'', '\\\'') + '\'', indent)
+  }
+
+  get [Symbol.toStringTag]() {
+    return `DmlString{${this.#value}}`
   }
 }
 
