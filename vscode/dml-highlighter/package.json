@@ -1,0 +1,35 @@
+{
+    "name": "dml-highlighter",
+    "displayName": "DML Highlighter",
+    "description": "Syntax highlighter for DML files",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.63.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "dml",
+            "aliases": ["DML", "dml"],
+            "extensions": [".dml",".dmlt"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "dml",
+            "scopeName": "source.dml",
+            "path": "./syntaxes/dml.tmLanguage.json"
+        }]
+    },
+    "publisher": "DaniFoldi",
+    "bugs": {
+        "url": "https://github.com/DaniFoldi/DML/issues"
+    },
+    "homepage": "https://github.com/DaniFoldi/DML#readme",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/DaniFoldi/DML.git"
+    },
+    "license": "MIT"
+}

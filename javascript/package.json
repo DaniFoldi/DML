@@ -1,9 +1,8 @@
 {
-  "name": "dml",
-  "version": "1.0.0",
-  "description": "",
+  "name": "dml-parser",
+  "version": "0.1.3",
+  "description": "Parser and serializer for dml",
   "type": "module",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint --ext .js src"
@@ -12,8 +11,8 @@
     "type": "git",
     "url": "git+https://github.com/DaniFoldi/DML.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["dml", "parser", "serializer", "different markup language", "config", "data", "format"],
+  "author": "DaniFoldi",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/DaniFoldi/DML/issues"
@@ -27,5 +26,18 @@
     "@babel/eslint-parser": "^7.16.5",
     "@babel/preset-env": "^7.16.11",
     "eslint": "^8.7.0"
+  },
+  "exports": {
+    ".": "./src/DmlParser.js",
+    "./serializer": "./src/DmlSerializer.js",
+    "./parser": "./src/DmlParser.js",
+    "./DmlParser": "./src/DmlParser.js",
+    "./DmlSerializer": "./src/DmlSerializer.js",
+    "./DmlArray": "./src/types/DmlArray.js",
+    "./DmlBoolean": "./src/types/DmlBoolean.js",
+    "./DmlNumber": "./src/types/DmlNumber.js",
+    "./DmlObject": "./src/types/DmlObject.js",
+    "./DmlString": "./src/types/DmlString.js",
+    "./JsonUtil": "./src/util/JsonUtil.js"
   }
 }

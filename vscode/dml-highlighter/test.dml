@@ -1,0 +1,28 @@
+// comment1
+// asd
+a: [false,
+{
+  x: true
+  y: false
+}
+
+]
+[ -1.1e-10  , 2, "asd",3]
+{
+  asd: 1,
+  bsd:2 }
+asd: "test\""
+'\"hi \'there \''
+asdasd: "hello"
+/* comment2
+*/
+{
+  asd: 1
+  bsd: 2 
+
+a:1
+b:2.2
+}
+[ 1, 2,3]
+x: true
+

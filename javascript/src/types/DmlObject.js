@@ -21,6 +21,9 @@ class DmlObject extends DmlCommentableValue {
     if (key instanceof DmlKey) {
       key = key.value()
     }
+    if (this.#map.get(key) === undefined) {
+      return undefined
+    }
     return this.#map.get(key)[1]
   }
 
