@@ -25,12 +25,52 @@ public class DmlObject extends DmlCommentableValue implements DmlDocument {
         return this.value.get(key);
     }
 
+    public DmlArray getArray(DmlKey key) {
+        return this.value.get(key).asArray();
+    }
+
+    public DmlBoolean getBoolean(DmlKey key) {
+        return this.value.get(key).asBoolean();
+    }
+
+    public DmlNumber getNumber(DmlKey key) {
+        return this.value.get(key).asNumber();
+    }
+
+    public DmlObject getObject(DmlKey key) {
+        return this.value.get(key).asObject();
+    }
+
+    public DmlString getString(DmlKey key) {
+        return this.value.get(key).asString();
+    }
+
     public Set<DmlKey> keys() {
         return this.value.keySet();
     }
 
     public DmlValue get(String key) {
         return this.value.get(new DmlKey(key));
+    }
+
+    public DmlArray getArray(String key) {
+        return this.value.get(new DmlKey(key)).asArray();
+    }
+
+    public DmlBoolean getBoolean(String key) {
+        return this.value.get(new DmlKey(key)).asBoolean();
+    }
+
+    public DmlNumber getNumber(String key) {
+        return this.value.get(new DmlKey(key)).asNumber();
+    }
+
+    public DmlObject getObject(String key) {
+        return this.value.get(new DmlKey(key)).asObject();
+    }
+
+    public DmlString getString(String key) {
+        return this.value.get(new DmlKey(key)).asString();
     }
 
     @Override
